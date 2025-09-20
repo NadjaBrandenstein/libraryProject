@@ -13,6 +13,9 @@ builder.Services.AddDbContext<MyDbContext>(conf =>
     conf.UseNpgsql(appOptions.DbConnectionString);
 });
 
+builder.Services.AddControllers();
+builder.Services.AddOpenApiDocument();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddCors();
 
 var app = builder.Build();
@@ -23,22 +26,10 @@ app.UseCors(config => config
     .AllowAnyOrigin()
     .SetIsOriginAllowed(x => true));
 
-app.MapGet("/", (
-    [FromServices] IOptions<AppOptions> options,
-    [FromServices] MyDbContext dbContext) =>
-{
-    var myBooks = new Book()
-    {
-        Id = Guid.NewGuid().ToString(),
-        Title = "test",
-        Pages = 150
-    };
-    dbContext.Books.Add(myBooks);
-    dbContext.SaveChanges();
-    
-    var books = dbContext.Books.ToList();
-    return books;
-    
-});
+app.MapControllers();
+app.UseOpenApi();
+app.UseSwaggerUi();
+app.UseExceptionHandler();
+
 
 app.Run();
