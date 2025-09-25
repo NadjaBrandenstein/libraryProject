@@ -6,14 +6,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.Services;
 
-public class LibraryService(MyDbContext dbContext) : ILibraryService
+public class BookService(MyDbContext dbContext) : ILibraryService<BookDto, CreateBookDto, UpdateBookDto>
 {
-    public async Task<List<BookDto>> GetAllBooks()
+    public async Task<List<BookDto>> GetAll()
     {
         return await dbContext.Books.Select(b => new BookDto(b)).ToListAsync();
     }
-
-    public async Task<BookDto> CreateBook(CreateBookDto dto)
+    
+    public async Task<BookDto> Create(CreateBookDto dto)
     {
         Validator.ValidateObject(dto, new ValidationContext(dto), true);
        var book = new Book
@@ -28,7 +28,7 @@ public class LibraryService(MyDbContext dbContext) : ILibraryService
         return new BookDto(book);
     }
 
-    public async Task<BookDto?> UpdateBook(UpdateBookDto dto)
+    public async Task<BookDto?> Update(UpdateBookDto dto)
     {
         Validator.ValidateObject(dto, new ValidationContext(dto), true);
         var existingBook = await dbContext.Books.FirstOrDefaultAsync(b => b.Id == dto.Id);
@@ -43,7 +43,7 @@ public class LibraryService(MyDbContext dbContext) : ILibraryService
         return new  BookDto(existingBook);
     }
 
-    public async Task<BookDto?> DeleteBook(string id)
+    public async Task<BookDto?> Delete(string id)
     {
         var existingBook = await dbContext.Books.FirstOrDefaultAsync(b => b.Id == id);
         if (existingBook == null)
@@ -53,39 +53,6 @@ public class LibraryService(MyDbContext dbContext) : ILibraryService
         dbContext.Books.Remove(existingBook);
         await dbContext.SaveChangesAsync();
         return new  BookDto(existingBook);
-    }
-
-    public async Task<List<AuthorDto>> GetAllAuthors()
-    {
-        return await dbContext.Authors.Select(a => new AuthorDto(a)).ToListAsync();
-    }
-
-    public async Task<AuthorDto> CreateAuthor(CreateAuthorDto dto)
-    {
-        Validator.ValidateObject(dto, new ValidationContext(dto), true);
-        var author = new Author()
-        {
-            Id = Guid.NewGuid().ToString(),
-            Name = dto.Name,
-            Createdat = DateTime.UtcNow,
-        };
-        dbContext.Authors.Add(author);
-        await dbContext.SaveChangesAsync();
-        return new  AuthorDto(author);
-    }
-
-    public async Task<AuthorDto?> UpdateAuthor(UpdateAuthorDto dto)
-    {
-        Validator.ValidateObject(dto, new ValidationContext(dto), true);
-        var existingAuthor = await dbContext.Authors.FirstOrDefaultAsync(a => a.Id == dto.Id);
-        if (existingAuthor == null)
-        {
-            return null;
-        }
-
-        existingAuthor.Name = dto.Name;
-        await dbContext.SaveChangesAsync();
-        return new AuthorDto(existingAuthor);
     }
     
 }

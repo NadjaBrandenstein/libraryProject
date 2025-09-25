@@ -1,4 +1,6 @@
 using api;
+using api.Controllers;
+using api.Dtos;
 using api.Services;
 using efscaffold;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +11,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 var appOptions = builder.Services.AddAppOptions(builder.Configuration);
 
-builder.Services.AddScoped<ILibraryService, LibraryService>();
+builder.Services.AddScoped<ILibraryService<BookDto, CreateBookDto, UpdateBookDto>, BookService>();
+builder.Services.AddScoped<ILibraryService<AuthorDto, CreateAuthorDto, UpdateAuthorDto>, AuthorService>();
+//builder.Services.AddScoped<ILibraryService<GenreDto, CreateGenreDto, UpdateGenreDto>, GenreService>();
+//builder.Services.AddScoped<ILibraryService<BookImageDto, CreateBookImageDto, UpdateBookImageDto>, BookImageService>();
+
 
 builder.Services.AddDbContext<MyDbContext>(conf =>
 {

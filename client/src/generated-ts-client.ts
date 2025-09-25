@@ -7,6 +7,138 @@
 /* eslint-disable */
 // ReSharper disable InconsistentNaming
 
+export class AuthorClient {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        this.http = http ? http : window as any;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    getAllAuthors(id: string | undefined, name: string | undefined, createdat: string | null | undefined, bookIds: string[] | undefined): Promise<AuthorDto> {
+        let url_ = this.baseUrl + "/GetAllAuthors?";
+        if (id === null)
+            throw new globalThis.Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        if (name === null)
+            throw new globalThis.Error("The parameter 'name' cannot be null.");
+        else if (name !== undefined)
+            url_ += "Name=" + encodeURIComponent("" + name) + "&";
+        if (createdat !== undefined && createdat !== null)
+            url_ += "Createdat=" + encodeURIComponent("" + createdat) + "&";
+        if (bookIds === null)
+            throw new globalThis.Error("The parameter 'bookIds' cannot be null.");
+        else if (bookIds !== undefined)
+            bookIds && bookIds.forEach(item => { url_ += "BookIds=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetAllAuthors(_response);
+        });
+    }
+
+    protected processGetAllAuthors(response: Response): Promise<AuthorDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as AuthorDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<AuthorDto>(null as any);
+    }
+
+    createAuthor(dto: CreateAuthorDto): Promise<AuthorDto> {
+        let url_ = this.baseUrl + "/CreateAuthor";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(dto);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateAuthor(_response);
+        });
+    }
+
+    protected processCreateAuthor(response: Response): Promise<AuthorDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as AuthorDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<AuthorDto>(null as any);
+    }
+
+    updateAuthor(dto: UpdateAuthorDto): Promise<AuthorDto> {
+        let url_ = this.baseUrl + "/UpdateAuthor";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(dto);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processUpdateAuthor(_response);
+        });
+    }
+
+    protected processUpdateAuthor(response: Response): Promise<AuthorDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as AuthorDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<AuthorDto>(null as any);
+    }
+}
+
 export class BookClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
@@ -160,6 +292,22 @@ export class BookClient {
         }
         return Promise.resolve<BookDto>(null as any);
     }
+}
+
+export interface AuthorDto {
+    id?: string;
+    name?: string;
+    createdat?: string | undefined;
+    bookIds?: string[];
+}
+
+export interface CreateAuthorDto {
+    name?: string;
+}
+
+export interface UpdateAuthorDto {
+    id?: string;
+    name?: string;
 }
 
 export interface BookDto {

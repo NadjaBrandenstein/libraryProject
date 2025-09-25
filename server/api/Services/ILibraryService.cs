@@ -4,14 +4,11 @@ using efscaffold;
 
 namespace api.Services;
 
-public interface ILibraryService
+public interface ILibraryService<TDto, TCreateDto, TUpdateDto>
 {
-    Task<List<BookDto>> GetAllBooks();
-    Task<BookDto> CreateBook (CreateBookDto dto);
-    Task<BookDto> UpdateBook(UpdateBookDto dto);
-    Task<BookDto> DeleteBook(string id);
-    
-    Task<List<AuthorDto>> GetAllAuthors();
-    Task<AuthorDto> CreateAuthor(CreateAuthorDto dto);
-    Task<AuthorDto> UpdateAuthor(UpdateAuthorDto dto);
+    Task<List<TDto>> GetAll();
+    Task<TDto> Create(TCreateDto dto);
+    Task<TDto?> Update(TUpdateDto dto);
+    Task<TDto?> Delete(string id);
 }
+    
