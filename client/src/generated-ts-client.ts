@@ -17,7 +17,7 @@ export class BookClient {
         this.baseUrl = baseUrl ?? "";
     }
 
-    getAllBooks(): Promise<Book[]> {
+    getAllBooks(): Promise<BookDto[]> {
         let url_ = this.baseUrl + "/GetAllBooks";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -33,13 +33,13 @@ export class BookClient {
         });
     }
 
-    protected processGetAllBooks(response: Response): Promise<Book[]> {
+    protected processGetAllBooks(response: Response): Promise<BookDto[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as Book[];
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as BookDto[];
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -47,10 +47,10 @@ export class BookClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<Book[]>(null as any);
+        return Promise.resolve<BookDto[]>(null as any);
     }
 
-    createBook(dto: CreateBookDto): Promise<Book> {
+    createBook(dto: CreateBookDto): Promise<BookDto> {
         let url_ = this.baseUrl + "/CreateBook";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -70,13 +70,13 @@ export class BookClient {
         });
     }
 
-    protected processCreateBook(response: Response): Promise<Book> {
+    protected processCreateBook(response: Response): Promise<BookDto> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as Book;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as BookDto;
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -84,38 +84,102 @@ export class BookClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<Book>(null as any);
+        return Promise.resolve<BookDto>(null as any);
+    }
+
+    updateBook(dto: UpdateBookDto): Promise<BookDto> {
+        let url_ = this.baseUrl + "/UpdateBook";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(dto);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processUpdateBook(_response);
+        });
+    }
+
+    protected processUpdateBook(response: Response): Promise<BookDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as BookDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<BookDto>(null as any);
+    }
+
+    deleteBook(id: string | undefined): Promise<BookDto> {
+        let url_ = this.baseUrl + "/DeleteBook?";
+        if (id === null)
+            throw new globalThis.Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "DELETE",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDeleteBook(_response);
+        });
+    }
+
+    protected processDeleteBook(response: Response): Promise<BookDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as BookDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<BookDto>(null as any);
     }
 }
 
-export interface Book {
+export interface BookDto {
     id?: string;
     title?: string;
     pages?: number;
     createdat?: string | undefined;
     genreid?: string | undefined;
-    genre?: Genre | undefined;
-    authors?: Author[];
-}
-
-export interface Genre {
-    id?: string;
-    name?: string;
-    createdat?: string | undefined;
-    books?: Book[];
-}
-
-export interface Author {
-    id?: string;
-    name?: string;
-    createdat?: string | undefined;
-    books?: Book[];
+    authorsIds?: string[];
 }
 
 export interface CreateBookDto {
-    id?: string;
-    title?: string;
     pages?: number;
+    title?: string;
+}
+
+export interface UpdateBookDto {
+    id?: string;
+    pages?: number;
+    title?: string;
 }
 
 export class ApiException extends Error {

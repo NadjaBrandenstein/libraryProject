@@ -32,8 +32,7 @@ function App() {
                 setBooks([...books, result]);
             })
         }}>Create new book</button>
-        <hr/>
-
+        <br/>
         {
             books.map(t => {
                 return <div key = {t.id}>

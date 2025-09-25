@@ -5,6 +5,8 @@ namespace api.Services;
 
 public interface ILibraryService
 {
-    Task<Book> CreateBook (CreateBookDto dto);
-    Task<List<Book>> GetAllBooks();
+    Task<BookDto> CreateBook (CreateBookDto dto);
+    Task<List<BookDto>> GetAllBooks();
+    Task<BookDto> UpdateBook(UpdateBookDto dto);
+    Task<BookDto> DeleteBook(string id);
 }

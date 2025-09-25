@@ -2,8 +2,9 @@
 
 namespace api.Dtos;
 
-public record CreateBookDto()
+public class UpdateBookDto
 {
+    public string Id { get; set; } = null!;
     [Range(1, int.MaxValue)] 
     public int Pages { get; set; }
     [MinLength(1)] 

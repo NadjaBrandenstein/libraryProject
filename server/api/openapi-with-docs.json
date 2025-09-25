@@ -20,7 +20,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Book"
+                    "$ref": "#/components/schemas/BookDto"
                   }
                 }
               }
@@ -53,7 +53,69 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Book"
+                  "$ref": "#/components/schemas/BookDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/UpdateBook": {
+      "patch": {
+        "tags": [
+          "Book"
+        ],
+        "operationId": "Book_UpdateBook",
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBookDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/DeleteBook": {
+      "delete": {
+        "tags": [
+          "Book"
+        ],
+        "operationId": "Book_DeleteBook",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookDto"
                 }
               }
             }
@@ -64,7 +126,7 @@
   },
   "components": {
     "schemas": {
-      "Book": {
+      "BookDto": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -87,64 +149,10 @@
             "type": "string",
             "nullable": true
           },
-          "genre": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Genre"
-              }
-            ]
-          },
-          "authors": {
+          "authorsIds": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Author"
-            }
-          }
-        }
-      },
-      "Genre": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "createdat": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "books": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Book"
-            }
-          }
-        }
-      },
-      "Author": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "createdat": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "books": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Book"
+              "type": "string"
             }
           }
         }
@@ -153,15 +161,34 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "id": {
-            "type": "string"
+          "pages": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 2147483647.0,
+            "minimum": 1.0
           },
           "title": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "UpdateBookDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
             "type": "string"
           },
           "pages": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "maximum": 2147483647.0,
+            "minimum": 1.0
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
           }
         }
       }
