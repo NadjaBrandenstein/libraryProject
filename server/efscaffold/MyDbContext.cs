@@ -15,6 +15,8 @@ public partial class MyDbContext : DbContext
 
     public virtual DbSet<Book> Books { get; set; }
 
+    public virtual DbSet<Bookimage> Bookimages { get; set; }
+
     public virtual DbSet<Genre> Genres { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -63,6 +65,25 @@ public partial class MyDbContext : DbContext
                 .HasForeignKey(d => d.Genreid)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("book_genreid_fkey");
+        });
+
+        modelBuilder.Entity<Bookimage>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("bookimage_pkey");
+
+            entity.ToTable("bookimage", "library");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Bookid).HasColumnName("bookid");
+            entity.Property(e => e.Createdat)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("createdat");
+            entity.Property(e => e.Url).HasColumnName("url");
+
+            entity.HasOne(d => d.Book).WithMany(p => p.Bookimages)
+                .HasForeignKey(d => d.Bookid)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("bookimage_bookid_fkey");
         });
 
         modelBuilder.Entity<Genre>(entity =>

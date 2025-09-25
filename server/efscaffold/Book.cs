@@ -15,6 +15,8 @@ public partial class Book
 
     public string? Genreid { get; set; }
 
+    public virtual ICollection<Bookimage> Bookimages { get; set; } = new List<Bookimage>();
+
     public virtual Genre? Genre { get; set; }
 
     public virtual ICollection<Author> Authors { get; set; } = new List<Author>();
