@@ -9,7 +9,7 @@ public class AuthorDto
         Id = author.Id;
         Name = author.Name;
         Createdat = author.Createdat;
-        BookIds = author.Books?.Select(a => a.Id).ToList() ?? new List<string>();
+        BookIds = author.Books?.Select(b => b.Id).ToList() ?? new List<string>();
     }
     
     public string Id { get; set; } = null!;

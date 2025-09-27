@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers;
 
+[ApiController]
 public class AuthorController: ControllerBase
 {
     private readonly ILibraryService<AuthorDto, CreateAuthorDto, UpdateAuthorDto> _libraryService;

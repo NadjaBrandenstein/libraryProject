@@ -5,5 +5,6 @@ namespace api.Controllers;
 public class CreateAuthorDto
 {
     [MinLength(1)] 
-    public string Name { get; set; } = null!;
+    [Required]
+    public required string Name { get; set; } = null!;
 }

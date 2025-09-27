@@ -17,27 +17,17 @@ export class AuthorClient {
         this.baseUrl = baseUrl ?? "";
     }
 
-    getAllAuthors(id: string | undefined, name: string | undefined, createdat: string | null | undefined, bookIds: string[] | undefined): Promise<AuthorDto> {
-        let url_ = this.baseUrl + "/GetAllAuthors?";
-        if (id === null)
-            throw new globalThis.Error("The parameter 'id' cannot be null.");
-        else if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
-        if (name === null)
-            throw new globalThis.Error("The parameter 'name' cannot be null.");
-        else if (name !== undefined)
-            url_ += "Name=" + encodeURIComponent("" + name) + "&";
-        if (createdat !== undefined && createdat !== null)
-            url_ += "Createdat=" + encodeURIComponent("" + createdat) + "&";
-        if (bookIds === null)
-            throw new globalThis.Error("The parameter 'bookIds' cannot be null.");
-        else if (bookIds !== undefined)
-            bookIds && bookIds.forEach(item => { url_ += "BookIds=" + encodeURIComponent("" + item) + "&"; });
+    getAllAuthors(dto: AuthorDto): Promise<AuthorDto> {
+        let url_ = this.baseUrl + "/GetAllAuthors";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(dto);
+
         let options_: RequestInit = {
+            body: content_,
             method: "GET",
             headers: {
+                "Content-Type": "application/json",
                 "Accept": "application/json"
             }
         };
@@ -122,6 +112,43 @@ export class AuthorClient {
     }
 
     protected processUpdateAuthor(response: Response): Promise<AuthorDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as AuthorDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<AuthorDto>(null as any);
+    }
+
+    deleteAuthor(id: string | undefined): Promise<AuthorDto> {
+        let url_ = this.baseUrl + "/DeleteAuthor?";
+        if (id === null)
+            throw new globalThis.Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "DELETE",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDeleteAuthor(_response);
+        });
+    }
+
+    protected processDeleteAuthor(response: Response): Promise<AuthorDto> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -294,6 +321,316 @@ export class BookClient {
     }
 }
 
+export class BookImageClient {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        this.http = http ? http : window as any;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    getAllBookImages(): Promise<BookImageDto[]> {
+        let url_ = this.baseUrl + "/GetAllBookImages";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetAllBookImages(_response);
+        });
+    }
+
+    protected processGetAllBookImages(response: Response): Promise<BookImageDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as BookImageDto[];
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<BookImageDto[]>(null as any);
+    }
+
+    createBookImage(dto: CreateBookImageDto): Promise<BookImageDto> {
+        let url_ = this.baseUrl + "/CreateBookImage";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(dto);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateBookImage(_response);
+        });
+    }
+
+    protected processCreateBookImage(response: Response): Promise<BookImageDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as BookImageDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<BookImageDto>(null as any);
+    }
+
+    updateBookImage(dto: UpdateBookImageDto): Promise<BookImageDto> {
+        let url_ = this.baseUrl + "/UpdateBookImage";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(dto);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processUpdateBookImage(_response);
+        });
+    }
+
+    protected processUpdateBookImage(response: Response): Promise<BookImageDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as BookImageDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<BookImageDto>(null as any);
+    }
+
+    deleteBookImage(id: string | undefined): Promise<BookImageDto> {
+        let url_ = this.baseUrl + "/DeleteBookImage?";
+        if (id === null)
+            throw new globalThis.Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "DELETE",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDeleteBookImage(_response);
+        });
+    }
+
+    protected processDeleteBookImage(response: Response): Promise<BookImageDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as BookImageDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<BookImageDto>(null as any);
+    }
+}
+
+export class GenreClient {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        this.http = http ? http : window as any;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    getAllGenres(): Promise<GenreDto[]> {
+        let url_ = this.baseUrl + "/GetAllGenres";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetAllGenres(_response);
+        });
+    }
+
+    protected processGetAllGenres(response: Response): Promise<GenreDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as GenreDto[];
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<GenreDto[]>(null as any);
+    }
+
+    createGenre(dto: CreateGenreDto): Promise<GenreDto> {
+        let url_ = this.baseUrl + "/CreateGenre";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(dto);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateGenre(_response);
+        });
+    }
+
+    protected processCreateGenre(response: Response): Promise<GenreDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as GenreDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<GenreDto>(null as any);
+    }
+
+    updateGenre(dto: UpdateGenreDto): Promise<GenreDto> {
+        let url_ = this.baseUrl + "/UpdateGenre";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(dto);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processUpdateGenre(_response);
+        });
+    }
+
+    protected processUpdateGenre(response: Response): Promise<GenreDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as GenreDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<GenreDto>(null as any);
+    }
+
+    deleteGenre(id: string | undefined): Promise<GenreDto> {
+        let url_ = this.baseUrl + "/DeleteGenre?";
+        if (id === null)
+            throw new globalThis.Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "DELETE",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDeleteGenre(_response);
+        });
+    }
+
+    protected processDeleteGenre(response: Response): Promise<GenreDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as GenreDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<GenreDto>(null as any);
+    }
+}
+
 export interface AuthorDto {
     id?: string;
     name?: string;
@@ -302,12 +639,12 @@ export interface AuthorDto {
 }
 
 export interface CreateAuthorDto {
-    name?: string;
+    name: string;
 }
 
 export interface UpdateAuthorDto {
     id?: string;
-    name?: string;
+    name: string;
 }
 
 export interface BookDto {
@@ -320,14 +657,80 @@ export interface BookDto {
 }
 
 export interface CreateBookDto {
-    pages?: number;
-    title?: string;
+    pages: number;
+    title: string;
 }
 
 export interface UpdateBookDto {
     id?: string;
-    pages?: number;
+    pages: number;
+    title: string;
+}
+
+export interface BookImageDto {
+    id?: string;
+    bookid?: string | undefined;
+    url?: string;
+    createdat?: string | undefined;
+    book?: Book | undefined;
+}
+
+export interface Book {
+    id?: string;
     title?: string;
+    pages?: number;
+    createdat?: string | undefined;
+    genreid?: string | undefined;
+    bookimages?: Bookimage[];
+    genre?: Genre | undefined;
+    authors?: Author[];
+}
+
+export interface Bookimage {
+    id?: string;
+    bookid?: string | undefined;
+    url?: string;
+    createdat?: string | undefined;
+    book?: Book | undefined;
+}
+
+export interface Genre {
+    id?: string;
+    name?: string;
+    createdat?: string | undefined;
+    books?: Book[];
+}
+
+export interface Author {
+    id?: string;
+    name?: string;
+    createdat?: string | undefined;
+    books?: Book[];
+}
+
+export interface CreateBookImageDto {
+    url: string;
+}
+
+export interface UpdateBookImageDto {
+    id: string;
+    url: string;
+}
+
+export interface GenreDto {
+    id?: string;
+    name?: string;
+    createdat?: string | undefined;
+    books?: string[];
+}
+
+export interface CreateGenreDto {
+    name: string;
+}
+
+export interface UpdateGenreDto {
+    id?: string;
+    name: string;
 }
 
 export class ApiException extends Error {

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using api.Controllers;
 using api.Dtos;
 using efscaffold;
 using Microsoft.EntityFrameworkCore;
@@ -14,8 +13,8 @@ public class BookService(MyDbContext dbContext) : ILibraryService<BookDto, Creat
     }
     
     public async Task<BookDto> Create(CreateBookDto dto)
-    {
-        Validator.ValidateObject(dto, new ValidationContext(dto), true);
+    { 
+       Validator.ValidateObject(dto, new ValidationContext(dto), true);
        var book = new Book
         {
             Id = Guid.NewGuid().ToString(),
@@ -40,7 +39,7 @@ public class BookService(MyDbContext dbContext) : ILibraryService<BookDto, Creat
         existingBook.Title = dto.Title;
         existingBook.Pages = dto.Pages;
         await dbContext.SaveChangesAsync();
-        return new  BookDto(existingBook);
+        return new BookDto(existingBook);
     }
 
     public async Task<BookDto?> Delete(string id)

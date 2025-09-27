@@ -2,11 +2,11 @@
 
 namespace api.Dtos;
 
-public class UpdateBookDto
+public class UpdateAuthorDto
 {
     public string Id { get; set; } = null!;
-    [Range(1, int.MaxValue)] 
-    public int Pages { get; set; }
+    
     [MinLength(1)] 
-    public string Title { get; set; }
+    [Required] 
+    public required string Name { get; set; } = null!;
 }
